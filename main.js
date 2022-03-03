@@ -1,0 +1,622 @@
+kauan = process.cwd()
+const express = require('express')
+const fs = require('fs')
+const yts = require('yt-search')
+const { ytMp3, ytMp4, ytPlay, ytPlayMp4, ytSearch } = require('./lib/yt.js')
+const { y2mateA, yt2mateV } = require('./lib/ytmate.js')
+const down = require('./lib/yt-down')
+const gimage = require('g-i-s')
+const fetch = require('node-fetch')
+const axios = require('axios')
+const canvacord = require("canvacord")
+const trans = require('@vitalets/google-translate-api')
+const translate = (text, lang) => { return new Promise(async (resolve, reject) => { trans(text, { client: 'gtx', to: lang }).then((res) => resolve(res.text)).catch((err) => reject(err)) });}
+const wiki = require("@dada513/wikipedia-search")
+
+PORT = process.env.PORT || 5000
+
+async function getBuffer(url) {
+  he = await fetch(url)
+  .then(c => c.buffer())
+   return he
+}
+
+var key = 'ale203'
+
+const app = express()
+////PAGINA INICIAL Q IRA REDIRECIONAR PRA /DOCS
+
+.get('/api/bala',(req, res) => {
+apikey = req.query.apikey
+if(apikey != key)return res.json({status:false,msg:'apikey invalida, ou faltando a key'})
+})
+
+
+.get('/', (req, res) => {
+res.sendFile(kauan + '/views/index.html')
+})
+
+.get('/loli', (req, res) => {
+(async() => {
+json = JSON.parse(fs.readFileSync('lib/lolis.json').toString())
+random = json[Math.floor(Math.random() * json.length)]
+res.type('jpg')
+res.send(await getBuffer(random))
+})()
+})
+
+.get('/shota', (req, res) => {
+(async() => {
+json = JSON.parse(fs.readFileSync('lib/shotas.json').toString())
+random = json[Math.floor(Math.random() * json.length)]
+res.type('jpg')
+res.send(await getBuffer(random))
+})()
+})
+
+.get('/nsfw/loli', (req, res) => {
+(async() => {
+json = JSON.parse(fs.readFileSync('lib/nsfwlolis.json').toString())
+random = json[Math.floor(Math.random() * json.length)]
+res.type('jpg')
+res.send(await getBuffer(random))
+})()
+})
+
+.get('/canvas/trigger',(req, res) => {
+(async() => {
+url = req.query.url
+if (!url) return res.status(408).send({ status: 408, menssagem: 'Coloque a url no parametrô'})
+apikey = req.query.apikey
+if(!apikey)return res.json({status:false,msg:'cade o parametro apikey'})
+if(apikey != key)return res.json({status:false,msg:'apikey invalida'})
+res.type('gif')
+res.send(await canvacord.Canvas.trigger(url))
+})()
+})
+
+.get('/canvas/phub',(req, res) => {
+(async() => {
+nome = req.query.nome
+msg = req.query.msg
+foto = req.query.foto
+if (!foto) return res.status(408).send({ status: 408, menssagem: 'Coloque a url no parametrô'})
+if (!msg) return res.status(408).send({ status: 408, menssagem: 'Coloque a msg no parametrô'})
+if (!nome) return res.status(408).send({ status: 408, menssagem: 'Coloque o nome no parametrô'})
+apikey = req.query.apikey
+if(!apikey)return res.json({status:false,msg:'cade o parametro apikey'})
+if(apikey != key)return res.json({status:false,msg:'apikey invalida'})
+kauan = { username: nome, message: msg, image:foto}
+res.type('jpg')
+res.send(await canvacord.Canvas.phub(kauan))
+})()
+})
+
+.get('/canvas/youtube',(req, res) => {
+(async() => {
+nome = req.query.nome
+msg = req.query.msg
+foto = req.query.foto
+if (!foto) return res.status(408).send({ status: 408, menssagem: 'Coloque a url no parametrô'})
+if (!msg) return res.status(408).send({ status: 408, menssagem: 'Coloque a msg no parametrô'})
+if (!nome) return res.status(408).send({ status: 408, menssagem: 'Coloque o nome no parametrô'})
+apikey = req.query.apikey
+if(!apikey)return res.json({status:false,msg:'cade o parametro apikey'})
+if(apikey != key)return res.json({status:false,msg:'apikey invalida'})
+kauan = { username: nome, content: msg, avatar: foto, dark:false }
+res.type('jpg')
+res.send(await canvacord.Canvas.youtube(kauan))
+})()
+})
+
+.get('/canvas/wasted',(req, res) => {
+(async() => {
+url = req.query.url
+if (!url) return res.status(408).send({ status: 408, menssagem: 'Coloque a url no parametrô'})
+apikey = req.query.apikey
+if(!apikey)return res.json({status:false,msg:'cade o parametro apikey'})
+if(apikey != key)return res.json({status:false,msg:'apikey invalida'})
+res.type('jpg')
+res.send(await canvacord.Canvas.wasted(url))
+})()
+})
+
+.get('/canvas/rainbow',(req, res) => {
+(async() => {
+ url = req.query.url
+if (!url) return res.status(408).send({ status: 408, menssagem: 'Coloque a url no parametrô'})
+apikey = req.query.apikey
+if(!apikey)return res.json({status:false,msg:'cade o parametro apikey'})
+if(apikey != key)return res.json({status:false,msg:'apikey invalida'})
+res.type('jpg')
+res.send(await canvacord.Canvas.rainbow(url))
+})()
+})
+
+.get('/canvas/invert',(req, res) => {
+(async() => {
+url = req.query.url
+if (!url) return res.status(408).send({ status: 408, menssagem: 'Coloque a url no parametrô'})
+apikey = req.query.apikey
+if(!apikey)return res.json({status:false,msg:'cade o parametro apikey'})
+if(apikey != key)return res.json({status:false,msg:'apikey invalida'})
+res.type('jpg')
+res.send(await canvacord.Canvas.invert(url))
+})()
+})
+
+.get('/canvas/hitler',(req, res) => {
+(async() => {
+ url = req.query.url
+if (!url) return res.status(408).send({ status: 408, menssagem: 'Coloque a url no parametrô'})
+apikey = req.query.apikey
+if(!apikey)return res.json({status:false,msg:'cade o parametro apikey'})
+if(apikey != key)return res.json({status:false,msg:'apikey invalida'})
+res.type('jpg')
+res.send(await canvacord.Canvas.hitler(url))
+})()
+})
+
+.get('/canvas/trash',(req, res) => {
+(async() => {
+url = req.query.url
+if (!url) return res.status(408).send({ status: 408, menssagem: 'Coloque a url no parametrô'})
+apikey = req.query.apikey
+if(!apikey)return res.json({status:false,msg:'cade o parametro apikey'})
+if(apikey != key)return res.json({status:false,msg:'apikey invalida'})
+res.type('gif')
+res.send(await canvacord.Canvas.trash(url))
+})()
+})
+
+.get('/canvas/shit',(req, res) => {
+(async() => {
+url = req.query.url
+if (!url) return res.status(408).send({ status: 408, menssagem: 'Coloque a url no parametrô'})
+apikey = req.query.apikey
+if(!apikey)return res.json({status:false,msg:'cade o parametro apikey'})
+if(apikey != key)return res.json({status:false,msg:'apikey invalida'})
+res.type('jpg')
+res.send(await canvacord.Canvas.shit(url))
+})()
+})
+
+.get('/canvas/blur',(req, res) => {
+(async() => {
+ url = req.query.url
+if (!url) return res.status(408).send({ status: 408, menssagem: 'Coloque a url no parametrô'})
+apikey = req.query.apikey
+if(!apikey)return res.json({status:false,msg:'cade o parametro apikey'})
+if(apikey != key)return res.json({status:false,msg:'apikey invalida'})  
+res.type('jpg')
+res.send(await canvacord.Canvas.blur(url))
+})()
+})
+
+.get('/canvas/rip',(req, res) => {
+(async() => {
+url = req.query.url
+if (!url) return res.status(408).send({ status: 408, menssagem: 'Coloque a url no parametrô'})
+apikey = req.query.apikey
+if(!apikey)return res.json({status:false,msg:'cade o parametro apikey'})
+if(apikey != key)return res.json({status:false,msg:'apikey invalida'})
+res.type('jpg')
+  res.send(await canvacord.Canvas.rip(url))
+})()
+})
+
+.get('/canvas/jail',(req, res) => {
+(async() => {
+ url = req.query.url
+if (!url) return res.status(408).send({ status: 408, menssagem: 'Coloque a url no parametrô'})
+apikey = req.query.apikey
+if(!apikey)return res.json({status:false,msg:'cade o parametro apikey'})
+if(apikey != key)return res.json({status:false,msg:'apikey invalida'})
+res.type('jpg')
+res.send(await canvacord.Canvas.jail(url))
+})()
+})
+
+.get('/canvas/kiss',(req, res) => {
+(async() => {
+ url = req.query.url
+url2 = req.query.url2
+if (!url) return res.status(408).send({ status: 408, menssagem: 'Coloque a url no parametrô'})
+if (!url2) return res.status(408).send({ status: 408, menssagem: 'Coloque a url2 no parametrô'})
+apikey = req.query.apikey
+if(!apikey)return res.json({status:false,msg:'cade o parametro apikey'})
+if(apikey != key)return res.json({status:false,msg:'apikey invalida'})
+  res.type('jpg')
+  res.send(await canvacord.Canvas.kiss(url, url2))
+})()
+})
+
+.get('/about',(req, res) => {
+res.json({
+status:true,
+dono:'@Aleatory </>',
+msg:'Projeto em beta'
+})
+})
+
+.get('/api/playstore',(req,res) => {
+q = req.query.q
+if(!q)return res.json({
+status:false,
+msg:'Cade o parametro q??'
+})
+apikey = req.query.apikey
+if(!apikey)return res.json({status:false,msg:'cade o parametro apikey'})
+if(apikey != key)return res.json({status:false,msg:'apikey invalida'})
+down.playstore(q)
+.then(e => {
+res.json({
+status:true,
+criador: '@Kauanzin </>',
+resultados: e
+})
+})
+})
+
+.get('/api/ttp',async (req, res) => {
+texto = req.query.texto
+if(!texto)return res.json({
+status:false,
+msg:'Cade o parametro texto??'
+})
+apikey = req.query.apikey
+if(!apikey)return res.json({status:false,msg:'cade o parametro apikey'})
+if(apikey != key)return res.json({status:false,msg:'apikey invalida'})
+cor = ["f702ff","ff0202","00ff2e","efff00","00ecff","3100ff","ffb400","ff00b0","00ff95","efff00"] //CORES COLOQUE QUALQUER UMA MAS EM CODE
+fonte = ["Days%20One","Domine","Exo","Fredoka%20One","Gentium%20Basic","Gloria%20Hallelujah","Great%20Vibes","Orbitron","PT%20Serif","Pacifico"]//FONTS NÃO MEXA
+cores = cor[Math.floor(Math.random() * (cor.length))]	 				 
+fontes = fonte[Math.floor(Math.random() * (fonte.length))]	 		
+fetch(`https://huratera.sirv.com/PicsArt_08-01-10.00.42.png?profile=Example-Text&text.0.text=${texto}&text.0.outline.color=000000&text.0.outline.blur=0&text.0.outline.opacity=55&text.0.color=${cores}&text.0.font.family=${fontes}&text.0.background.color=ff0000`)               
+.then(bala => bala.buffer())
+.then(async (sitee) => {
+res.type('jpg')
+res.send(await getBuffer(sitee))
+})
+})
+
+.get('/api/fbdown',(req,res) => {
+url = req.query.url
+if(!url)return res.json({
+status:false,
+msg:'Cade o parametro url??'
+})
+apikey = req.query.apikey
+if(!apikey)return res.json({status:false,msg:'cade o parametro apikey'})
+if(apikey != key)return res.json({status:false,msg:'apikey invalida'})
+down.fbdown(url)
+.then(e => {
+res.json({
+status:true,
+criador: '@Kauanzin',
+resultado: e})
+})
+})
+
+.get('/api/lirik',(req,res) => {
+q = req.query.q
+if(!q)return res.json({
+status:false,
+msg:'Cade o parametro q??'
+})
+apikey = req.query.apikey
+if(!apikey)return res.json({status:false,msg:'cade o parametro apikey'})
+if(apikey != key)return res.json({status:false,msg:'apikey invalida'})
+down.lirik(q)
+.then(e => {
+res.json({
+status:true,
+criador: '@Kauanzin',
+resultado: e})
+})
+})
+
+.get('/api/gimage',(req,res) => {
+q = req.query.q
+if(!q)return res.json({
+status:false,
+msg:'Cade o parametro q??'
+})
+apikey = req.query.apikey
+if(!apikey)return res.json({status:false,msg:'cade o parametro apikey'})
+if(apikey != key)return res.json({status:false,msg:'apikey invalida'})
+gimage(q, async (error, results) => {
+if (error) {
+console.log(error)
+res.json({
+status:false,
+msg:'Não encontrei imagem'
+})
+} else {
+bala = await getBuffer(results[1].url)
+res.type('jpg')
+res.send(bala)
+}
+})
+})
+
+.get('/api/ssweb',async (req,res,next) => {
+url = req.query.url
+if(!url)return res.json({
+status:false,
+motivo:'nao_tem_url'
+})
+apikey = req.query.apikey
+if(!apikey)return res.json({status:false,msg:'cade o parametro apikey'})
+if(apikey != key)return res.json({status:false,msg:'apikey invalida'})
+fetch('https://mnazria.herokuapp.com/api/screenshotweb?url='+url, async(error, results) => {
+if(error){
+console.log(error)
+res.json({
+status:false,
+msg:'Não encontrei o site'
+})
+} else { 
+resultado = results
+bala = await getBuffer(resultado.gambar)
+res.type('jpg')
+res.send(bala)
+}
+})
+})
+
+.get('/api/avatar',(req,res,next) => {
+fetch(encodeURI(`https://nekos.life/api/v2/img/avatar`))
+apikey = req.query.apikey
+if(!apikey)return res.json({status:false,msg:'cade o parametro apikey'})
+if(apikey != key)return res.json({status:false,msg:'apikey invalida'})
+.then(response => response.json())
+.then(async (data) => {
+resultado =  data
+bala = await getBuffer(resultado.url)
+res.type('jpg')
+res.send(bala)
+})
+.catch(e => {
+res.json({erro:'erro'})
+})
+})
+
+.get('/api/github',(req,res,next) => {
+pessoa = req.query.usuario
+if(!pessoa)return res.json({
+status:false,
+motivo:'cade_o_usuario'
+})
+apikey = req.query.apikey
+if(!apikey)return res.json({status:false,msg:'cade o parametro apikey'})
+if(apikey != key)return res.json({status:false,msg:'apikey invalida'})
+fetch(encodeURI(`https://api.github.com/users/`+pessoa))
+.then(response => response.json())
+.then(date => {
+gitData =  date;
+res.json({
+criador:"Kauãzinツ",
+status:true,
+resultado:{
+username: gitData.login,
+id: gitData.id,
+Node_ID: gitData.node_id,
+url: gitData.html_url,
+local: (gitData.location == null) ? 'não_tem' : gitData.location,
+bio: (gitData.bio == null) ? 'não_tem' : gitData.bio,
+twitter:  (gitData.twitter_username == null) ? 'não_tem' : gitData.twitter_username,
+seguidores: gitData.followers,
+seguindo: gitData.following,
+criado: gitData.created_at,
+atualizado: gitData.updated_at,
+procura_trabalho: (gitData.hireable == null) ? 'Não' : gitData.hireable,
+Site: (gitData.blog == "") ? 'Não' : gitData.blog,
+repositorios: gitData.public_repos,
+admin_de_Site: (gitData.site_admin == false) ? 'Não' : gitData.site_admin,
+tipo: gitData.type,
+empresa: (gitData.company == null) ? 'Não' : gitData.company,
+email: (gitData.email == null) ? 'Não' : gitData.email
+
+
+} 
+})
+})
+.catch(e => {
+res.json({erro:e})
+})
+})
+
+.get('/api/tradutor',(req,res) => {
+lang = req.query.lang
+texto = req.query.texto
+if(!lang)return res.json({
+status:false,
+msg:'Cade o parametro lang??'
+})
+if(!texto)return res.json({
+status:false,
+msg:'Cade o parametro texto??'
+})
+apikey = req.query.apikey
+if(!apikey)return res.json({status:false,msg:'cade o parametro apikey'})
+if(apikey != key)return res.json({status:false,msg:'apikey invalida'})
+translate(texto, lang)
+.then(re => {
+    res.json({
+status:true,
+criador:'@Kauanzin </>',
+traducao: re
+    })
+}).catch(err => {
+    console.error(err);
+})
+})
+
+.get('/api/wiki',(req,res) => {
+texto = req.query.texto
+if(!texto)return res.json({
+status:false,
+msg:'Cade o parametro texto??'
+})
+apikey = req.query.apikey
+if(!apikey)return res.json({status:false,msg:'cade o parametro apikey'})
+if(apikey != key)return res.json({status:false,msg:'apikey invalida'})
+wiki.search(`${texto}`, 'pt')
+.then(async (wikip) => {
+const wikis = await axios.get(`https://pt.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro&explaintext&redirects=1&pageids=${wikip[0].pageid}`)
+const getData = Object.keys(wikis.data.query.pages)
+
+res.json({
+status:true,
+criador:'@Kauanzin </>',
+resultado:wikis.data.query.pages[getData].extract
+    })
+}).catch(err => {
+    console.error(err);
+})
+})
+
+
+//////YTS
+.get('/api/play',(req,res) => {
+q = req.query.q
+if(!q)return res.json({
+status:false,
+msg:'Cade o parametro q??'
+})
+apikey = req.query.apikey
+if(!apikey)return res.json({status:false,msg:'cade o parametro apikey'})
+if(apikey != key)return res.json({status:false,msg:'apikey invalida'})
+ytPlay(q)
+.then(e => {
+res.json(e)
+})
+})
+
+
+.get('/api/playv2',(req,res) => {
+q = req.query.q
+if(!q)return res.json({
+status:false,
+msg:'Cade o parametro q??'
+})
+apikey = req.query.apikey
+if(!apikey)return res.json({status:false,msg:'cade o parametro apikey'})
+if(apikey != key)return res.json({status:false,msg:'apikey invalida'})
+yts(q)
+.then(e => {
+y2mateA(e.all[0].url)
+.then(re => {
+a = e.all[0]
+res.json({
+status: true,
+criador: '@Kauanzin</>',
+resultado: {
+titulo: a.title,
+duracao: a.timestamp,
+upload: a.ago,
+visu: a.views,
+canal: a.author.name,
+link_canal: a.author.url,
+link_video: 'https://youtu.be/'+a.videoId,
+audio_url: re[0].link
+}
+})
+})
+})
+})
+
+.get('/api/playmp4',(req,res) => {
+q = req.query.q
+if(!q)return res.json({
+status:false,
+msg:'Cade o parametro q??'
+})
+apikey = req.query.apikey
+if(!apikey)return res.json({status:false,msg:'cade o parametro apikey'})
+if(apikey != key)return res.json({status:false,msg:'apikey invalida'})
+ytPlayMp4(q)
+.then(e => {
+res.json({
+status:true,
+criador:'@Kauanzin</>',
+resultado:e
+})
+})
+})
+
+.get('/api/ytsrc',(req,res) => {
+q = req.query.q
+if(!q)return res.json({
+status:false,
+msg:'Cade o parametro q??'
+})
+apikey = req.query.apikey
+if(!apikey)return res.json({status:false,msg:'cade o parametro apikey'})
+if(apikey != key)return res.json({status:false,msg:'apikey invalida'})
+ytSearch(q)
+.then(e => {
+res.json({
+status:true,
+criador:'@Kauanzin</>',
+resultado:e
+})
+})
+})
+
+.get('/api/ytMp4',(req,res) => {
+url = req.query.url
+if(!url)return res.json({
+status:false,
+msg:'Cade o parametro url??'
+})
+apikey = req.query.apikey
+if(!apikey)return res.json({status:false,msg:'cade o parametro apikey'})
+if(apikey != key)return res.json({status:false,msg:'apikey invalida'})
+ytMp4(url)
+.then(e => {
+res.json({
+status:true,
+criador:'@Kauanzin</>',
+resultado:e
+})
+})
+})
+
+.get('/api/ytMp3',(req,res) => {
+url = req.query.url
+if(!url)return res.json({
+status:false,
+msg:'Cade o parametro url??'
+})
+apikey = req.query.apikey
+if(!apikey)return res.json({status:false,msg:'cade o parametro apikey'})
+if(apikey != key)return res.json({status:false,msg:'apikey invalida'})
+ytMp3(url)
+.then(e => {
+res.json({
+status:true,
+criador:'Kauanzin</>',
+resultado:e
+})
+})
+})
+
+
+
+////FUNÇAO DE PAGINA Q NAO TEM FUNÇÃO SOBRE ELA
+.get('*', function(req, res) {
+res.status(404).json({
+status:false,
+msg: 'PAGINA NÃO ENCONTRADA'
+})
+})
+
+
+
+//////MOSTRA SE O APP FOI ABERTO
+app.listen(PORT, () => {
+console.log('App aberto na porta: ',PORT)
+})
+
+
