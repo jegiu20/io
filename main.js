@@ -87,7 +87,7 @@ resultado: e
 })
 
 
-.get('/down/ytplay',(req, res) => {
+.get('/down/ytplay',async(req, res) => {
 q = req.query.q
 if(!q)return res.json({status:false,msg:'cade o parametro q'})
 				    const ytres = await yts(`${q}`)
@@ -97,7 +97,7 @@ res.sendFile(`./paraguai.mp3`)
 })
 })
 
-.get('/down/play',(req, res) => {
+.get('/down/play',async(req, res) => {
 q = req.query.q
 if(!q)return res.json({status:false,msg:'cade o parametro q'})
 const ytres = await yts(`${q}`)
