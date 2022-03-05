@@ -55,7 +55,7 @@ var criador = 'Kauanzin</>'
 
 const app = express()
 ////PAGINA INICIAL Q IRA REDIRECIONAR PRA /DOCS
-try{
+
 .get('/', (req, res) => {
 res.sendFile(kauan + '/views/index.html')
 })
@@ -775,10 +775,7 @@ resultado:e
 })
 })
 
-}catch(err){
-console.log(err)
 
-}
 
 ////FUNÇAO DE PAGINA Q NAO TEM FUNÇÃO SOBRE ELA
 .get('*', function(req, res) {
