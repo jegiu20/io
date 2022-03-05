@@ -1,7 +1,7 @@
 kauan = process.cwd()
 const express = require('express')
 const fs = require('fs')
-const yts = require('yt-search')
+
 const { ytMp3, ytMp4, ytPlay, ytPlayMp4, ytSearch } = require('./lib/yt.js')
 const { y2mateA, yt2mateV } = require('./lib/ytmate.js')
 const yts = require('yt-search')
